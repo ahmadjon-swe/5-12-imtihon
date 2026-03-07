@@ -1,12 +1,13 @@
 const {Router} = require("express")
 const authorization = require("../middleware/authorization")
+const { getAllCars, getOneCar, addCar, updateCar, deleteCar } = require("../controller/car.controller")
 
 const carRouter = Router()
 
 carRouter.get("/get_all_cars", getAllCars)
 carRouter.get("/get_one_car/:id", getOneCar)
-carRouter.post("/add_car", authorization, addCar)
-carRouter.put("/update_car/:id",authorization, updateCar)
+carRouter.post("/add_car", authorization, uploadCarImage.fields([{name: "car_main_image", maxCount: 1}, {name: "car_inner_image", maxCount: 1}, {name: "car_outer_image", maxCount: 1}]), addCar)
+carRouter.put("/update_car/:id",authorization, uploadCarImage.fields([{name: "car_main_image", maxCount: 1}, {name: "car_inner_image", maxCount: 1}, {name: "car_outer_image", maxCount: 1}]), updateCar)
 carRouter.delete("/delete_car/:id",authorization, deleteCar )
 
 module.exports = carRouter

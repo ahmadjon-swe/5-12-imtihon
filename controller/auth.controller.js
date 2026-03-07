@@ -95,31 +95,7 @@ const logout = async (req, res, next)=>{
 
     res.clearCookie("refresh_token")
 
-    logger.info("user logged out: " + foundedEmail._id)
-    res.status(200).json({message: "successfully logged out"})
-  } catch (error) {
-    next(error)
-  }
-}
-
-// LOGOUT BY COOKIE ////////////////////////////////////////
-const logoutByCookie = async (req, res, next)=>{
-  try {
-    const token = req.cookies.refresh_token
-
-    if(!token){
-      throw ErrorHandler.BadRequest("Already logged out")
-    }
-
-    const decode = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
-
-    if(decode){
-      await AuthSchema.findByIdAndUpdate(decode._id, {refreshToken: "", otp: "", otpTime: 0})
-    }
-
-    res.clearCookie("refresh_token")
-
-    logger.info("user logged out by cookie: " + decode._id)
+    logger.info("user logged out: " + foundedEmail.email)
     res.status(200).json({message: "successfully logged out"})
   } catch (error) {
     next(error)
@@ -173,7 +149,7 @@ const verify = async (req, res, next)=>{
         maxAge: 60 * 24 *  60 * 60 * 1000 // 2 oy
       })
     
-    logger.info("user logged in: " + foundedEmail._id)
+    logger.info("user logged in: " + foundedEmail.email)
     res.status(201).json({
       message: "logged in succesfully",
       token: accessToken
@@ -212,7 +188,7 @@ const delete_account = async (req, res, next)=>{
       throw ErrorHandler.BadRequest("password is incorrect")
     }
 
-    logger.info("user deleted: " + id)
+    logger.info("user deleted: " + user.email)
     await AuthSchema.findByIdAndDelete(id)
 
     res.status(201).json({message: "account deleted successfully"})
@@ -327,8 +303,7 @@ const forgot_password_verify = async (req, res, next)=>{
 
     await AuthSchema.findByIdAndUpdate(foundedEmail._id, {otp: "", otpTime: 0, password: hash}) 
     
-    logger.info("password updated: " + foundedEmail._id)
-
+    logger.info("password updated: " + email)
     res.status(201).json({
       message: "password updated successfully"
     })
@@ -377,7 +352,6 @@ module.exports = {
   register,
   login,
   logout,
-  logoutByCookie,
   verify,
   delete_account,
   resend_otp,

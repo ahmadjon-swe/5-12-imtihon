@@ -2,6 +2,7 @@ const multer =require("multer")
 const fs =require("fs")
 const path =require("path")
 const {v4} = require("uuid")
+
 const imageStorage = (folder)=>multer.diskStorage({
   destination: (req, file, cb) => {
     const existFolder = "uploads/images/"+folder
@@ -10,7 +11,7 @@ const imageStorage = (folder)=>multer.diskStorage({
     cb(null, existFolder)
   },
   filename: (req, file, cb)=>{
-    const suffex = folder + "-image-" + v4()
+    const suffex = file.fieldname + "_" + v4()
     const ext = path.extname(file.originalname)
 
     cb(null, suffex+ext)
@@ -31,9 +32,15 @@ const fileFilter = (req, file, cb) => {
 }
 
 const uploadCategoryImage = multer({
-  storage: imageStorage("category"),
+  storage: imageStorage("categories"),
   limits: {fileSize: 1024 * 1024 * 20},
   fileFilter
 })
 
-module.exports = uploadCategoryImage
+const uploadCarImage = multer({
+  storage: imageStorage("cars"),
+  limits: {fileSize: 1024 * 1024 * 20},
+  fileFilter
+})
+
+module.exports = {uploadCategoryImage, uploadCarImage}

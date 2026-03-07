@@ -1,16 +1,36 @@
-const CustomErrorHandler = require("../error/custom-error.handler")
+const ErrorHandler = require("../errors/error")
+const CarSchema = require("../schema/car.schema")
 const CategorySchema = require("../schema/category.schema")
-
+const logger = require("../utils/logger")
 // get_all ////////////////////////////////////////////////////////////////////////////////////
-const getAllCategorys = async (req, res, next) => {
+const getAllCategories = async (req, res, next) => {
   try {
-    const categorys = await CategorySchema.find().populate("authorInfo", "-_id fullname period work")
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const search = req.query.search || ""
+    const sort = req.query.sort || "createdAt"
+    
+    const skip = (page-1) * limit
+    
+    const query = {}
 
-    if(!categorys){
-      throw CustomErrorHandler.NotFound("404 categorys are not found")
+    if(search.trim()){
+      query.name = {$regex: search, $options: "i"}
+    }
+    
+    const total = await CategorySchema.countDocuments(query)
+    const categories = await CategorySchema.find(query).populate("auth").sort(sort).skip(skip).limit(limit)
+
+    if(!categories){
+      throw ErrorHandler.NotFound("404 categories are not found")
     }
 
-    res.status(200).json(categorys)
+    res.status(200).json({
+      totalPage: Math.ceil(total/limit),
+      prev: page>1 ? {page: page-1, limit} : undefined,
+      next: total > page * limit ? {page: page+1, limit} : undefined,
+      data: categories
+    })
   } catch (error) {
     next(error)
   }
@@ -21,13 +41,15 @@ const getAllCategorys = async (req, res, next) => {
 const getOneCategory = async (req, res, next) => {
   try {
     const reqID = req.params.id
-    const category = await CategorySchema.findById(reqID).populate("authorInfo")
-
+    const category = await CategorySchema.findById(reqID)
+    
     if(!category){
-      throw CustomErrorHandler.NotFound("404 category is not found")
+      throw ErrorHandler.NotFound("404 category is not found")
     }
 
-    res.status(200).json(category)
+    const cars = await CarSchema.find({categoryInfo: reqID})
+
+    res.status(200).json({category, cars})
   } catch (error) {
     next(error)
   }
@@ -37,14 +59,36 @@ const getOneCategory = async (req, res, next) => {
 // add ////////////////////////////////////////////////////////////////////////////////////
 const addCategory = async (req, res, next) => {
   try {
-    const {title, pages, publishedYear, publishedHome, period, description, genre, imageUrl, authorInfo}= req.body
-
-    if(!title || !pages || !publishedYear || !publishedHome || !period || !description || !genre || !imageUrl || !authorInfo){
-      throw CustomErrorHandler.BadRequest("all fields must be filled in")
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
     }
 
-    await CategorySchema.create({title, pages, publishedYear, publishedHome, period, description, genre, imageUrl, authorInfo})
+    const {_id, role, email} = req.user
 
+    if(role !== "admin" && role !== "superadmin"){
+      throw ErrorHandler.Forbidden("you are not admin")
+    }
+
+    const {name}= req.body
+
+    if(!name){
+      throw ErrorHandler.BadRequest("name is required")
+    }
+
+    const foundedCategory = await CategorySchema.findOne({name})
+
+    if(foundedCategory){
+      throw ErrorHandler.BadRequest("category already exists")
+    }
+
+    if(!req.file){
+      throw ErrorHandler.BadRequest("image is required")
+    }
+
+    const imageUrl = req.file.path.replace(/\\/g, "/")
+    await CategorySchema.create({name, adminInfo: _id, imageUrl})
+
+    logger.info("category added: " + name, "by: " + email)
     res.status(201).json({
       message: "added new category"
     })
@@ -57,17 +101,40 @@ const addCategory = async (req, res, next) => {
 // update ////////////////////////////////////////////////////////////////////////////////////
 const updateCategory = async (req, res, next) => {
   try {
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
+    }
+    const {_id, role} = req.user
+
+    if(role !== "admin" && role !== "superadmin"){
+      throw ErrorHandler.Forbidden("you are not admin")
+    }
+
     const reqID = req.params.id
-    const {title, pages, publishedYear, publishedHome, period, description, genre, imageUrl, authorInfo}= req.body
+    const {name}= req.body
 
     const category = await CategorySchema.findById(reqID)
 
     if(!category){
-      throw CustomErrorHandler.NotFound("404 category is not found")
+      throw ErrorHandler.NotFound("404 category is not found")
     }
-    
-    await CategorySchema.findByIdAndUpdate(reqID, {title, pages, publishedYear, publishedHome, period, description, genre, imageUrl, authorInfo})
 
+    
+    if(req.file){
+      const url = path.join("../uploads/images/categories/" + category.imageUrl)
+      if(fs.existsSync(url)){
+        fs.unlinkSync(url)
+      }
+      const imageUrl = req.file.path.replace(/\\/g, "/")
+      category.imageUrl = imageUrl
+    }
+
+    if(name){
+      category.name = name
+    }
+    await category.save()
+
+    logger.info("category updated: " + category.name, "by: " + email)
     res.status(201).json({
       message: "updated category"
     })
@@ -80,15 +147,27 @@ const updateCategory = async (req, res, next) => {
 // delete ////////////////////////////////////////////////////////////////////////////////////
 const deleteCategory = async (req, res, next) => {
   try {
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
+    }
+
+    const {_id, role} = req.user
+
+    if(role !== "admin" && role !== "superadmin"){
+      throw ErrorHandler.Forbidden("you are not admin")
+    }
+
     const reqID = req.params.id
 
     const category = await CategorySchema.findById(reqID)
 
     if(!category){
-      throw CustomErrorHandler.NotFound("404 category is not found")
+      throw ErrorHandler.NotFound("404 category is not found")
     }
 
     await CategorySchema.findByIdAndDelete(reqID)
+
+    logger.info("category deleted: " + category.name, "by: " + email)
 
     res.status(201).json({
       message: "deleted category"
@@ -101,7 +180,7 @@ const deleteCategory = async (req, res, next) => {
 
 // EXPORT ////////////////////////////////////////////////////////////////////////////////////
 module.exports = {
-  getAllCategorys,
+  getAllCategories,
   getOneCategory,
   addCategory,
   updateCategory,

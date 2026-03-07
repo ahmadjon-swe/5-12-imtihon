@@ -18,6 +18,8 @@ const Auth = new Schema({
     type: String,
     required: true,
     match: /^[a-zA-Z]+$/,
+    minLength: 3,
+    maxLength: 50,
     trim: true
   },
   email: {
@@ -41,11 +43,6 @@ const Auth = new Schema({
     type: String,
     enum: ["user", "admin", "superadmin"],
     default: "user"
-  },
-  savedCars: {
-    type: Array,
-    default: [],
-    required: false
   },
   otp: {
     type: String,
