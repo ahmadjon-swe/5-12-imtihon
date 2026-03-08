@@ -5,7 +5,9 @@ const connectDataBase = require("./config/database.connect")
 const cookieParser = require("cookie-parser")
 const errorMiddleware = require("./middleware/error.middleware")
 const authRouter = require("./router/auth.routes")
-const adminRouter = require("./router/admin.routes")
+const superadminRouter = require("./router/superadmin.routes")
+const carRouter = require("./router/car.routes")
+const categoryRouter = require("./router/category.routes")
 
 
 connectDataBase()
@@ -16,7 +18,9 @@ app.use(cookieParser())
 
 // ROUTERS
 app.use(authRouter)
-app.use(adminRouter)
+app.use(superadminRouter)
+app.use(carRouter)
+app.use(categoryRouter)
 
 // CHECK ERRORS
 app.use(errorMiddleware)

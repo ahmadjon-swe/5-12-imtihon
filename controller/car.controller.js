@@ -1,6 +1,10 @@
 const ErrorHandler = require("../errors/error")
 const CarSchema = require("../schema/car.schema")
+const CategorySchema = require("../schema/category.schema")
+const fs = require("fs")
+const path = require("path")
 const logger = require("../utils/logger")
+
 
 // get_all ////////////////////////////////////////////////////////////////////////////////////
 const getAllCars = async (req, res, next) => {
@@ -13,6 +17,51 @@ const getAllCars = async (req, res, next) => {
     const skip = (page-1) * limit
     
     const query = {}
+
+    if(search.trim()){
+      query.name = {$regex: search, $options: "i"}
+    }
+    
+    const total = await CarSchema.countDocuments(query)
+    const cars = await CarSchema.find(query).populate("category", "name -_id").sort(sort).skip(skip).limit(limit)
+
+    if(!cars){
+      throw ErrorHandler.NotFound("404 cars are not found")
+    }
+
+    res.status(200).json({
+      totalPage: Math.ceil(total/limit),
+      prev: page>1 ? {page: page-1, limit} : undefined,
+      next: total > page * limit ? {page: page+1, limit} : undefined,
+      data: cars
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+// get_all ////////////////////////////////////////////////////////////////////////////////////
+const getMyCars = async (req, res, next) => {
+  try {
+    
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
+    }
+
+    const {_id, role} = req.user
+
+    if(role !== "admin" && role !== "superadmin"){
+      throw ErrorHandler.Forbidden("you are not admin")
+    }
+
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const search = req.query.search || ""
+    const sort = req.query.sort || "createdAt"
+    
+    const skip = (page-1) * limit
+    
+    const query = {adminInfo: _id}
 
     if(search.trim()){
       query.name = {$regex: search, $options: "i"}
@@ -67,14 +116,20 @@ const addCar = async (req, res, next) => {
       throw ErrorHandler.Forbidden("you are not admin")
     }
 
-    const {name, category, tan, motor, year, color, distance, gearbox, price, description} = req.body
+    const {name, category, tan, motor, year, color, distance, gearbook, price, description} = req.body
 
-    if(!name || !category || tan === undefined || !motor || !year || !color || distance === undefined || !gearbox || !price || !description){
+    const categoryNames = (await CategorySchema.find()).map(v=>v.name.toLowerCase())
+
+    if(!categoryNames.includes(category.toLowerCase())){
+      throw ErrorHandler.BadRequest("category must be real")
+    }
+
+    if(!name || !category || tan === undefined || !motor || !year || !color || distance === undefined || !gearbook || !price || !description){
       throw ErrorHandler.BadRequest("all fields are required")
     }
 
-    if(!req.file){
-      throw ErrorHandler.BadRequest("image is required")
+    if(!req.files){
+      throw ErrorHandler.BadRequest("images are required")
     }
 
     const mainImageUrl = req.files["car_main_image"] ? req.files["car_main_image"][0].path.replace(/\\/g, "/") : undefined
@@ -85,7 +140,7 @@ const addCar = async (req, res, next) => {
       throw ErrorHandler.BadRequest("all images are required")
     }
 
-    await CarSchema.create({name, category, tan, motor, year, color, distance, gearbox, price, description, mainImageUrl, outerImageUrl, innerImageUrl, auth: _id})
+    await CarSchema.create({name, category, tan, motor, year, color, distance, gearbook, price, description, mainImageUrl, outerImageUrl, innerImageUrl, adminInfo: _id})
 
     logger.info("car added: " + name, "by: " + email)
     res.status(201).json({
@@ -110,7 +165,14 @@ const updateCar = async (req, res, next) => {
     }
 
     const reqID = req.params.id
-    const {name, category, tan, motor, year, color, distance, gearbox, price, description} = req.body
+    const {name, category, tan, motor, year, color, distance, gearbook, price, description} = req.body
+    const query = {name, category, tan, motor, year, color, distance, gearbook, price, description}
+    // databaseda bor category yozilganini tekshirish.
+    const categoryNames = (await CategorySchema.find()).map(v=>v.name.toLowerCase())
+
+    if(category && !categoryNames.includes(category.toLowerCase())){
+      throw ErrorHandler.BadRequest("category must be real")
+    }
 
     const car = await CarSchema.findById(reqID)
 
@@ -118,33 +180,32 @@ const updateCar = async (req, res, next) => {
       throw ErrorHandler.NotFound("404 car is not found")
     }
 
-    if(req.file){
+    if(req.files){
       const mainImageUrl = req.files["car_main_image"] ? req.files["car_main_image"][0].path.replace(/\\/g, "/") : undefined
       const innerImageUrl = req.files["car_inner_image"] ? req.files["car_inner_image"][0].path.replace(/\\/g, "/") : undefined
       const outerImageUrl = req.files["car_outer_image"] ? req.files["car_outer_image"][0].path.replace(/\\/g, "/") : undefined
 
       if(mainImageUrl) {
-        const url = path.join("../uploads/images/cars/" + car.mainImageUrl)
+        const url = path.join(__dirname, "..", car.mainImageUrl)
+        query.mainImageUrl = mainImageUrl
         if(fs.existsSync(url)) fs.unlinkSync(url)
-        car.mainImageUrl = mainImageUrl
       }
       if(innerImageUrl) {
-        const url = path.join("../uploads/images/cars/" + car.innerImageUrl)
+        const url = path.join(__dirname, "..", car.innerImageUrl)
+        query.innerImageUrl = innerImageUrl
         if(fs.existsSync(url)) fs.unlinkSync(url)
-        car.innerImageUrl = innerImageUrl
       }
       if(outerImageUrl) {
-        const url = path.join("../uploads/images/cars/" + car.outerImageUrl)
+        const url = path.join(__dirname, "..", car.outerImageUrl)
+        query.outerImageUrl = outerImageUrl
         if(fs.existsSync(url)) fs.unlinkSync(url)
-        car.outerImageUrl = outerImageUrl
-      }
-      await car.save()
+      } 
     }
 
-    await CarSchema.findByIdAndUpdate(reqID, {name, category, tan, motor, year, color, distance, gearbox, price, description})
+    await CarSchema.findByIdAndUpdate(reqID, query, {new: true})
 
     logger.info("car updated: " + car.name, "by: " + email)
-    res.status(201).json({
+    res.status(200).json({
       message: "updated car"
     })
   } catch (error) {
@@ -160,7 +221,7 @@ const deleteCar = async (req, res, next) => {
       throw ErrorHandler.Forbidden("you are not verified")
     }
 
-    const {_id, role, email} = req.user
+    const {role, email} = req.user
 
     if(role !== "admin" && role !== "superadmin"){
       throw ErrorHandler.Forbidden("you are not admin")
@@ -190,6 +251,7 @@ const deleteCar = async (req, res, next) => {
 // EXPORT ////////////////////////////////////////////////////////////////////////////////////
 module.exports = {
   getAllCars,
+  getMyCars,
   getOneCar,
   addCar,
   updateCar,

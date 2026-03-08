@@ -10,7 +10,7 @@ const Car = new Schema({
   category: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "category"
+    ref: "categories"
   },
   tan:{
     type: Boolean,
@@ -38,11 +38,10 @@ const Car = new Schema({
     required: true,
     min: 0
   },
-  gearbox: {
-    type: Number,
+  gearbook: {
+    type: String,
     required: true,
-    min: 4,
-    max: 8
+    enum: ["avtomat karobka", "mexanik karobka"]
   },
   price: {
     type: Number,
@@ -59,28 +58,28 @@ const Car = new Schema({
   mainImageUrl: {
     type: String,
     required: true,
-    match: /^\/uploads\/images\/\/[a-z0-9\-]+\.(jpg|jpeg|png|webp)$/i
+    match: /^uploads\/images\/cars\/[a-z0-9\-_]+\.(jpg|jpeg|png|webp|gif)$/i
   },
   outerImageUrl: {
     type: String,
     required: true,
-    match: /^\/uploads\/images\/\/[a-z0-9\-]+\.(jpg|jpeg|png|webp)$/i
+    match: /^uploads\/images\/cars\/[a-z0-9\-_]+\.(jpg|jpeg|png|webp|gif)$/i
   },
   innerImageUrl: {
     type: String,
     required: true,
-    match: /^\/uploads\/images\/\/[a-z0-9\-]+\.(jpg|jpeg|png|webp)$/i
+    match: /^uploads\/images\/cars\/[a-z0-9\-_]+\.(jpg|jpeg|png|webp|gif)$/i
   },
   adminInfo: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "auth"
+    ref: "auths"
   }
 }, {
   versionKey: false,
   timestamps: true
 })
   
-const CarSchema = model("car", Car)
+const CarSchema = model("cars", Car)
 
 module.exports = CarSchema

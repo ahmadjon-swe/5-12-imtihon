@@ -8,13 +8,13 @@ const Auth = new Schema({
     trim: true,
     unique: true
   },
-  firstName: {
+  firstname: {
     type: String,
     required: true,
     match: /^[a-zA-Z]+$/,
     trim: true
   },
-  lastName: {
+  lastname: {
     type: String,
     required: true,
     match: /^[a-zA-Z]+$/,
@@ -60,6 +60,6 @@ const Auth = new Schema({
   timestamps: true
 })
 
-const AuthSchema = model("auth", Auth)
+const AuthSchema = model("auths", Auth)
 
 module.exports = AuthSchema

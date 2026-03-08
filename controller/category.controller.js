@@ -1,7 +1,9 @@
 const ErrorHandler = require("../errors/error")
 const CarSchema = require("../schema/car.schema")
 const CategorySchema = require("../schema/category.schema")
+const fs = require("fs")
 const logger = require("../utils/logger")
+
 // get_all ////////////////////////////////////////////////////////////////////////////////////
 const getAllCategories = async (req, res, next) => {
   try {
@@ -19,7 +21,7 @@ const getAllCategories = async (req, res, next) => {
     }
     
     const total = await CategorySchema.countDocuments(query)
-    const categories = await CategorySchema.find(query).populate("auth").sort(sort).skip(skip).limit(limit)
+    const categories = await CategorySchema.find(query).populate("adminInfo").sort(sort).skip(skip).limit(limit)
 
     if(!categories){
       throw ErrorHandler.NotFound("404 categories are not found")
@@ -36,6 +38,50 @@ const getAllCategories = async (req, res, next) => {
   }
 }
 
+// get_all ////////////////////////////////////////////////////////////////////////////////////
+const getMyCategories = async (req, res, next) => {
+  try {
+    
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
+    }
+
+    const {_id, role} = req.user
+
+    if(role !== "admin" && role !== "superadmin"){
+      throw ErrorHandler.Forbidden("you are not admin")
+    }
+
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const search = req.query.search || ""
+    const sort = req.query.sort || "createdAt"
+    
+    const skip = (page-1) * limit
+    
+    const query = {adminInfo: _id}
+
+    if(search.trim()){
+      query.name = {$regex: search, $options: "i"}
+    }
+    
+    const total = await CategorySchema.countDocuments(query)
+    const categories = await CategorySchema.find(query).populate("adminInfo").sort(sort).skip(skip).limit(limit)
+
+    if(!categories){
+      throw ErrorHandler.NotFound("404 categories are not found")
+    }
+
+    res.status(200).json({
+      totalPage: Math.ceil(total/limit),
+      prev: page>1 ? {page: page-1, limit} : undefined,
+      next: total > page * limit ? {page: page+1, limit} : undefined,
+      data: categories
+    })
+  } catch (error) {
+    next(error)
+  }
+}
 
 // get_one ////////////////////////////////////////////////////////////////////////////////////
 const getOneCategory = async (req, res, next) => {
@@ -121,7 +167,7 @@ const updateCategory = async (req, res, next) => {
 
     
     if(req.file){
-      const url = path.join("../uploads/images/categories/" + category.imageUrl)
+      const url = category.imageUrl
       if(fs.existsSync(url)){
         fs.unlinkSync(url)
       }
@@ -151,7 +197,7 @@ const deleteCategory = async (req, res, next) => {
       throw ErrorHandler.Forbidden("you are not verified")
     }
 
-    const {_id, role} = req.user
+    const {email, role} = req.user
 
     if(role !== "admin" && role !== "superadmin"){
       throw ErrorHandler.Forbidden("you are not admin")
@@ -181,6 +227,7 @@ const deleteCategory = async (req, res, next) => {
 // EXPORT ////////////////////////////////////////////////////////////////////////////////////
 module.exports = {
   getAllCategories,
+  getMyCategories,
   getOneCategory,
   addCategory,
   updateCategory,

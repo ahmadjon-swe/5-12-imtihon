@@ -12,20 +12,19 @@ const Category = new Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => /^\/uploads\/images\/\/[a-z0-9\-]+\.(jpg|jpeg|png|webp)$/i.test(v),
-      message: "URL xato formatda: https://localhost/images/....."
+      validator: (v) => /^uploads\/images\/categories\/[a-z0-9\-_]+\.(jpg|jpeg|png|webp|gif)$/i.test(v)
     }
   },
   adminInfo: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "auth"
+    ref: "auths"
   }
 }, {
   versionKey: false,
   timestamps: true
 })
 
-const CategorySchema = model("category", Category)
+const CategorySchema = model("categories", Category)
 
 module.exports = CategorySchema

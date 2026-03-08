@@ -10,9 +10,9 @@ const logger = require("../utils/logger")
 // REGISTER ////////////////////////////////////////
 const register = async (req, res, next)=>{
   try {
-    const {username, email, password, phoneNumber} = req.body
+    const {username, firstname, lastname, email, password, phoneNumber} = req.body
 
-    if(!username || !email || !password || !phoneNumber){
+    if(!username || !email || !password || !phoneNumber || !firstname || !lastname){
       throw ErrorHandler.BadRequest("all fields must be filled")
     }
 
@@ -28,7 +28,7 @@ const register = async (req, res, next)=>{
 
     const otp = Array.from({length: 6}, ()=>Math.floor(Math.random()*10)).join("")
 
-    await AuthSchema.create({username, email, password: hash, phoneNumber, otp, otpTime: Date.now()+60000})
+    await AuthSchema.create({username, firstname, lastname, email, password: hash, phoneNumber, otp, otpTime: Date.now()+180000})
 
     send_email(otp, email)
 
@@ -62,7 +62,7 @@ const  login = async (req, res, next)=>{
 
     const otp = Array.from({length: 6}, ()=>Math.floor(Math.random()*10)).join("")
 
-    await AuthSchema.findByIdAndUpdate(foundedEmail._id, {otp, otpTime: Date.now()+60000})
+    await AuthSchema.findByIdAndUpdate(foundedEmail._id, {otp, otpTime: Date.now()+180000})
 
     send_email(otp, email)
 
@@ -125,7 +125,7 @@ const verify = async (req, res, next)=>{
       throw ErrorHandler.Forbidden("otp expired")
     }
 
-    if(foundedEmail.otp !== otp){
+    if(foundedEmail.otp != otp){
       throw ErrorHandler.BadRequest("otp is incorrect")
     }
 
@@ -295,7 +295,7 @@ const forgot_password_verify = async (req, res, next)=>{
       throw ErrorHandler.Forbidden("otp expired")
     }
 
-    if(foundedEmail.otp !== otp){
+    if(foundedEmail.otp != otp){
       throw ErrorHandler.BadRequest("otp is incorrect")
     }
 

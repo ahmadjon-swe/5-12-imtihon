@@ -9,9 +9,10 @@ module.exports = async (req, res, next) => {
       throw ErrorHandler.UnAuthorized("(no token) you are not logged in")
     }
 
-    const {Bearer, token} = authorization.split(" ")
+    const [Bearer, token] = authorization.split(" ")
 
-    if(Bearer !== "Bearer" && !token){
+    
+    if(Bearer !== "Bearer" || !token){
       throw ErrorHandler.BadRequest("Bearer token is required")
     }
 
@@ -21,6 +22,8 @@ module.exports = async (req, res, next) => {
       throw ErrorHandler.BadRequest("token verifying failed")
     }
     req.user = decode
+
+    next()
   } catch (error) {
     next(error)
   }

@@ -1,0 +1,39 @@
+{"errors":[],"level":"warn","message":"Handled error: \"firstName\" is required","timestamp":"2026-03-09 00:38:12"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: \"firstName\" is required","timestamp":"2026-03-09 00:44:59"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"new user registered: ahmadjon@example.com","timestamp":"2026-03-09 00:55:43"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"new user registered: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 00:56:43"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: otp expired","timestamp":"2026-03-09 00:58:49"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: otp is incorrect","timestamp":"2026-03-09 00:59:49"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:02:51"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:05:12"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:07:25"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:08:14"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:12:48"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:13:16"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:13:18"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: (no token) you are not logged in","timestamp":"2026-03-09 01:13:30"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:20:51"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:22:21"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: jwt expired","timestamp":"2026-03-09 01:23:04"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: otp expired","timestamp":"2026-03-09 01:24:39"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:25:49"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: categories validation failed: imageUrl: URL xato formatda: https://localhost/images/.....","timestamp":"2026-03-09 01:29:26"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: categories validation failed: imageUrl: Validator failed for path `imageUrl` with value `uploads/images/categories/cate...`","timestamp":"2026-03-09 01:30:39"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: categories validation failed: imageUrl: Validator failed for path `imageUrl` with value `uploads/images/categories/cate...`","timestamp":"2026-03-09 01:32:58"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: jwt expired","timestamp":"2026-03-09 01:41:41"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Unexpected number in JSON at position 58 (line 3 column 15)","timestamp":"2026-03-09 01:43:36"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:43:50"}
+{"0":"b","1":"y","10":"o","11":"n","12":"q","13":"s","14":"h","15":"@","16":"g","17":"m","18":"a","19":"i","2":":","20":"l","21":".","22":"c","23":"o","24":"m","3":" ","4":"a","5":"h","6":"m","7":"a","8":"d","9":"j","caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"category added: chevrolet","timestamp":"2026-03-09 01:44:11"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auth` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:44:22"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auth` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:45:09"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"new user registered: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:49:19"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:52:25"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:53:55"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: you are not admin","timestamp":"2026-03-09 01:54:17"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"user logged in: ahmadjonqsh@gmail.com","timestamp":"2026-03-09 01:55:39"}
+{"0":"b","1":"y","10":"o","11":"n","12":"q","13":"s","14":"h","15":"@","16":"g","17":"m","18":"a","19":"i","2":":","20":"l","21":".","22":"c","23":"o","24":"m","3":" ","4":"a","5":"h","6":"m","7":"a","8":"d","9":"j","caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"category added: chevrolet","timestamp":"2026-03-09 01:56:15"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:56:29"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:57:30"}
+{"0":"b","1":"y","10":"o","11":"n","12":"q","13":"s","14":"h","15":"@","16":"g","17":"m","18":"a","19":"i","2":":","20":"l","21":".","22":"c","23":"o","24":"m","3":" ","4":"a","5":"h","6":"m","7":"a","8":"d","9":"j","caller":"utils\\logger.js:46 (Format.transform)","level":"info","message":"category added: chevrolet","timestamp":"2026-03-09 01:59:05"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:59:15"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:59:18"}
