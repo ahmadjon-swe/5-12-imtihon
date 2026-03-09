@@ -93,7 +93,7 @@ const getOneCategory = async (req, res, next) => {
       throw ErrorHandler.NotFound("404 category is not found")
     }
 
-    const cars = await CarSchema.find({categoryInfo: reqID})
+    const cars = await CarSchema.find({category: reqID})
 
     res.status(200).json({category, cars})
   } catch (error) {

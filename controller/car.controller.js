@@ -118,11 +118,13 @@ const addCar = async (req, res, next) => {
 
     const {name, category, tan, motor, year, color, distance, gearbook, price, description} = req.body
 
-    const categoryNames = (await CategorySchema.find()).map(v=>v.name.toLowerCase())
+    const foundedCategory = await CategorySchema.findOne({name: category})
 
-    if(!categoryNames.includes(category.toLowerCase())){
+    if(!foundedCategory){
       throw ErrorHandler.BadRequest("category must be real")
     }
+
+
 
     if(!name || !category || tan === undefined || !motor || !year || !color || distance === undefined || !gearbook || !price || !description){
       throw ErrorHandler.BadRequest("all fields are required")
@@ -140,7 +142,7 @@ const addCar = async (req, res, next) => {
       throw ErrorHandler.BadRequest("all images are required")
     }
 
-    await CarSchema.create({name, category, tan, motor, year, color, distance, gearbook, price, description, mainImageUrl, outerImageUrl, innerImageUrl, adminInfo: _id})
+    await CarSchema.create({name, category: foundedCategory._id, tan, motor, year, color, distance, gearbook, price, description, mainImageUrl, outerImageUrl, innerImageUrl, adminInfo: _id})
 
     logger.info("car added: " + name, "by: " + email)
     res.status(201).json({
@@ -166,13 +168,16 @@ const updateCar = async (req, res, next) => {
 
     const reqID = req.params.id
     const {name, category, tan, motor, year, color, distance, gearbook, price, description} = req.body
-    const query = {name, category, tan, motor, year, color, distance, gearbook, price, description}
-    // databaseda bor category yozilganini tekshirish.
-    const categoryNames = (await CategorySchema.find()).map(v=>v.name.toLowerCase())
+    const query = {name, tan, motor, year, color, distance, gearbook, price, description}
 
-    if(category && !categoryNames.includes(category.toLowerCase())){
+     const foundedCategory = await CategorySchema.findOne({name: category})
+
+    if(category && !foundedCategory){
       throw ErrorHandler.BadRequest("category must be real")
+    }else{
+      query.category = foundedCategory._id
     }
+
 
     const car = await CarSchema.findById(reqID)
 

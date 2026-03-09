@@ -12,3 +12,7 @@
 {"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: Bearer token is required","timestamp":"2026-03-09 01:22:21"}
 {"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: otp expired","timestamp":"2026-03-09 01:24:39"}
 {"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: you are not admin","timestamp":"2026-03-09 01:54:17"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: otp is incorrect","timestamp":"2026-03-09 13:20:32"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: category already exists","timestamp":"2026-03-09 13:30:37"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: category must be real","timestamp":"2026-03-09 13:32:01"}
+{"caller":"utils\\logger.js:46 (Format.transform)","errors":[],"level":"warn","message":"Handled error: category must be real","timestamp":"2026-03-09 13:32:11"}

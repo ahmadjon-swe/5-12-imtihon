@@ -11,3 +11,8 @@
 {"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:57:30"}
 {"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:59:15"}
 {"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: Cannot populate path `auths` because it is not in your schema. Set the `strictPopulate` option to false to override.","timestamp":"2026-03-09 01:59:18"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: cars validation failed: category: Path `category` is required.","timestamp":"2026-03-09 13:21:03"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: cars validation failed: category: Path `category` is required.","timestamp":"2026-03-09 13:22:00"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: cars validation failed: category: Path `category` is required.","timestamp":"2026-03-09 13:22:50"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: cars validation failed: category: Path `category` is required.","timestamp":"2026-03-09 13:23:24"}
+{"caller":"utils\\logger.js:46 (Format.transform)","level":"error","message":"Unhandled error: cars validation failed: category: Path `category` is required.","timestamp":"2026-03-09 13:24:02"}
