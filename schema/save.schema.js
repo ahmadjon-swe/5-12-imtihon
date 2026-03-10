@@ -9,7 +9,7 @@ const Save = new Schema({
   userInfo: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: "auth"
+    ref: "auths"
   },
   isSaved: {
     type: Boolean,

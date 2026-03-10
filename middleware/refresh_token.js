@@ -10,11 +10,7 @@ module.exports = function(req, res, next){
       throw ErrorHandler.Forbidden("refresh token not found")
     }
 
-    if(!token){
-      throw ErrorHandler.Forbidden("refresh token not found")
-    }
-
-    const decode = jwt.decode(token, process.env.REFRESH_SECRET_KEY)
+    const decode = jwt.verify(token, process.env.REFRESH_SECRET_KEY)
 
     if(!decode){
       throw ErrorHandler.Forbidden("refresh token can't be read")

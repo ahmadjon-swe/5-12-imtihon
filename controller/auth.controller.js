@@ -143,7 +143,7 @@ const verify = async (req, res, next)=>{
 
     res.cookie("refresh_token", 
       refreshToken, {
-        httpsOnly: true,
+        httpOnly: true,
         secure: true,
         sameSite: "strict",
         maxAge: 60 * 24 *  60 * 60 * 1000 // 2 oy
@@ -277,7 +277,7 @@ const forgot_password_verify = async (req, res, next)=>{
   try {
     const {otp, email, newPassword} = req.body
 
-    if(!otp || !email){
+    if(!otp || !email || !newPassword){
       throw ErrorHandler.BadRequest("otp and email are required")
     }
 

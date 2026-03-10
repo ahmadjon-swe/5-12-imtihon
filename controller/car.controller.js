@@ -174,7 +174,7 @@ const updateCar = async (req, res, next) => {
 
     if(category && !foundedCategory){
       throw ErrorHandler.BadRequest("category must be real")
-    }else{
+    }else if(category){
       query.category = foundedCategory._id
     }
 
@@ -236,9 +236,18 @@ const deleteCar = async (req, res, next) => {
 
     const car = await CarSchema.findById(reqID)
 
+
+
     if(!car){
       throw ErrorHandler.NotFound("404 car is not found")
     }
+
+    let imagePath = path.join(__dirname, "..", car.mainImageUrl)
+    if(fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
+    imagePath = path.join(__dirname, "..", car.outerImageUrl)
+    if(fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
+    imagePath = path.join(__dirname, "..", car.innerImageUrl)
+    if(fs.existsSync(imagePath)) fs.unlinkSync(imagePath)
 
     await CarSchema.findByIdAndDelete(reqID)
 

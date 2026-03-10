@@ -4,6 +4,6 @@ const { changeRole } = require("../controller/superadmin.controller")
 
 const superadminRouter = Router()
 
-superadminRouter.patch("/change_role_admin", authorization, changeRole)
+superadminRouter.patch("/change_role_admin/:id", authorization, changeRole)
 
 module.exports = superadminRouter

@@ -15,7 +15,7 @@ carRouter.delete("/delete_car/:id",authorization, deleteCar )
 
 // SAVE ROUTE
 carRouter.post("/save_car/:id", authorization, saveCar)
-carRouter.post("/clear_unsaved_car/:id", authorization, clearUnsavedCars)
+carRouter.delete("/clear_unsaved_car/", authorization, clearUnsavedCars)
 
 module.exports = carRouter
 

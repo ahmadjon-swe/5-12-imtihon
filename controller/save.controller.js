@@ -1,5 +1,6 @@
 const ErrorHandler = require("../errors/error")
 const SaveSchema = require("../schema/save.schema")
+const logger = require("../utils/logger")
 
 const saveCar = async (req, res, next) => {
   try {
@@ -13,7 +14,7 @@ const saveCar = async (req, res, next) => {
       throw ErrorHandler.BadRequest("car id is required")
     }
 
-    const foundedSave = await SaveSchema.find({carInfo: id, UserInfo: _id})
+    const foundedSave = await SaveSchema.findOne({carInfo: id, userInfo: _id})
 
     if(foundedSave){
       foundedSave.isSaved = !foundedSave.isSaved
@@ -37,7 +38,7 @@ const clearUnsavedCars = async (req, res, next) => {
 
     const {role, email} = req.user
 
-    if(role !== "admin" || role !== "superadmin"){
+    if(role !== "admin" && role !== "superadmin"){
       throw ErrorHandler.Forbidden("you are not admin")
     }
 
