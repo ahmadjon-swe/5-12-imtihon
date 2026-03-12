@@ -1,0 +1,1081 @@
+openapi: 3.0.0
+info:
+  title: Car Marketplace API
+  description: Avtomobil bozori platformasi uchun REST API
+  version: 1.0.0
+  contact:
+    email: ahmadjonqsh@gmail.com
+
+servers:
+  - url: http://localhost:4001
+    description: Development server
+
+tags:
+  - name: Auth
+    description: Autentifikatsiya va foydalanuvchi boshqaruvi
+  - name: Car
+    description: Avtomobil CRUD operatsiyalari
+  - name: Category
+    description: Kategoriya CRUD operatsiyalari
+  - name: Superadmin
+    description: Superadmin operatsiyalari
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ─── Auth ───────────────────────────────────────────
+    RegisterBody:
+      type: object
+      required: [username, firstname, lastname, email, password, phoneNumber]
+      properties:
+        username:
+          type: string
+          pattern: '^[a-zA-Z]+$'
+          example: ahmadjon
+        firstname:
+          type: string
+          pattern: '^[a-zA-Z]+$'
+          example: Ahmadjon
+        lastname:
+          type: string
+          pattern: '^[a-zA-Z]+$'
+          example: Qosimov
+        email:
+          type: string
+          format: email
+          example: ahmadjon@gmail.com
+        phoneNumber:
+          type: string
+          pattern: '^\+998\d{9}$'
+          example: "+998901234567"
+        password:
+          type: string
+          minLength: 6
+          example: secret123
+
+    LoginBody:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: ahmadjon@gmail.com
+        password:
+          type: string
+          example: secret123
+
+    VerifyBody:
+      type: object
+      required: [email, otp]
+      properties:
+        email:
+          type: string
+          format: email
+          example: ahmadjon@gmail.com
+        otp:
+          type: string
+          minLength: 6
+          maxLength: 6
+          example: "482910"
+
+    OtpEmailBody:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+          example: ahmadjon@gmail.com
+
+    ResendOtpBody:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    ChangePasswordBody:
+      type: object
+      required: [oldPassword, newPassword]
+      properties:
+        oldPassword:
+          type: string
+          example: oldSecret123
+        newPassword:
+          type: string
+          example: newSecret456
+
+    ForgotPasswordVerifyBody:
+      type: object
+      required: [otp, email, newPassword]
+      properties:
+        otp:
+          type: string
+          example: "123456"
+        email:
+          type: string
+          format: email
+        newPassword:
+          type: string
+          minLength: 6
+          example: newSecret456
+
+    DeleteAccountBody:
+      type: object
+      required: [password]
+      properties:
+        password:
+          type: string
+          example: secret123
+
+    # ─── Car ────────────────────────────────────────────
+    CarResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 664a1b2c3d4e5f6789abcdef
+        name:
+          type: string
+          example: Toyota Camry
+        category:
+          type: object
+          properties:
+            name:
+              type: string
+              example: Sedan
+        tan:
+          type: boolean
+          example: false
+        motor:
+          type: number
+          example: 2.5
+        year:
+          type: integer
+          example: 2022
+        color:
+          type: string
+          example: white
+        distance:
+          type: number
+          example: 15000
+        gearbook:
+          type: string
+          example: avtomat karobka
+        price:
+          type: number
+          example: 35000
+        description:
+          type: string
+          example: Yaxshi holda, bitta egasi bo'lgan avtomobil
+        mainImageUrl:
+          type: string
+          example: uploads/images/cars/car_main_uuid.jpg
+        innerImageUrl:
+          type: string
+          example: uploads/images/cars/car_inner_uuid.jpg
+        outerImageUrl:
+          type: string
+          example: uploads/images/cars/car_outer_uuid.jpg
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    PaginationResponse:
+      type: object
+      properties:
+        totalPage:
+          type: integer
+          example: 5
+        prev:
+          type: object
+          nullable: true
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+        next:
+          type: object
+          nullable: true
+          properties:
+            page:
+              type: integer
+            limit:
+              type: integer
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarResponse'
+
+    # ─── Category ───────────────────────────────────────
+    CategoryResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 664a1b2c3d4e5f6789abcdef
+        name:
+          type: string
+          example: Sedan
+        imageUrl:
+          type: string
+          example: uploads/images/categories/category_uuid.jpg
+        adminInfo:
+          type: string
+          example: 664a1b2c3d4e5f6789abcdef
+        createdAt:
+          type: string
+          format: date-time
+
+    # ─── Common ─────────────────────────────────────────
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: success
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: error message
+        errors:
+          type: array
+          items:
+            type: string
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+      description: Sahifa raqami
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+      description: Bir sahifadagi elementlar soni
+    SearchParam:
+      name: search
+      in: query
+      schema:
+        type: string
+      description: Qidiruv matni (nom bo'yicha)
+    SortParam:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: createdAt
+      description: Saralash maydoni
+
+  responses:
+    Unauthorized:
+      description: Token yo'q yoki noto'g'ri
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Ruxsat yo'q
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Topilmadi
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: Noto'g'ri so'rov
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+# ═══════════════════════════════════════════════════════════════
+#  PATHS
+# ═══════════════════════════════════════════════════════════════
+paths:
+
+  # ─── AUTH ───────────────────────────────────────────────────
+
+  /register:
+    post:
+      tags: [Auth]
+      summary: Yangi foydalanuvchi ro'yxatdan o'tkazish
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBody'
+      responses:
+        '200':
+          description: Emailga OTP yuborildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: please check your email
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /login:
+    post:
+      tags: [Auth]
+      summary: Tizimga kirish (OTP yuboriladi)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginBody'
+      responses:
+        '201':
+          description: OTP emailga yuborildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: check your email
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /verify:
+    post:
+      tags: [Auth]
+      summary: OTP tasdiqlash — access va refresh token olish
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyBody'
+      responses:
+        '201':
+          description: Muvaffaqiyatli kirish
+          headers:
+            Set-Cookie:
+              description: refresh_token cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: logged in succesfully
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /logout:
+    post:
+      tags: [Auth]
+      summary: Tizimdan chiqish
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Muvaffaqiyatli chiqish
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: successfully logged out
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /delete_account:
+    delete:
+      tags: [Auth]
+      summary: Hisobni o'chirish
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountBody'
+      responses:
+        '201':
+          description: Hisob o'chirildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: account deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /resend_otp:
+    post:
+      tags: [Auth]
+      summary: OTP ni qayta yuborish
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOtpBody'
+      responses:
+        '201':
+          description: OTP qayta yuborildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: otp has been resended
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /change_password:
+    patch:
+      tags: [Auth]
+      summary: Parolni o'zgartirish
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordBody'
+      responses:
+        '201':
+          description: Parol yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: password is updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /forgot_password:
+    post:
+      tags: [Auth]
+      summary: Parolni unutdim — emailga OTP yuborish
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OtpEmailBody'
+      responses:
+        '201':
+          description: OTP yuborildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: please verify your email, in order to change your password
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /forgot_password_verify:
+    post:
+      tags: [Auth]
+      summary: OTP orqali yangi parol o'rnatish
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordVerifyBody'
+      responses:
+        '201':
+          description: Parol yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: password updated successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /refresh_token:
+    post:
+      tags: [Auth]
+      summary: Yangi access token olish (cookie orqali)
+      description: Cookie'dagi refresh_token orqali yangi access token olish
+      responses:
+        '201':
+          description: Yangi access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ─── CAR ────────────────────────────────────────────────────
+
+  /get_all_cars:
+    get:
+      tags: [Car]
+      summary: Barcha avtomobillarni olish (pagination, search, sort)
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Avtomobillar ro'yxati
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+
+  /get_my_cars:
+    get:
+      tags: [Car]
+      summary: Admin o'zining avtomobillarini ko'rish
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Admin avtomobillari
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /get_one_car/{id}:
+    get:
+      tags: [Car]
+      summary: Bitta avtomobilni olish
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Avtomobil ID si
+      responses:
+        '200':
+          description: Avtomobil ma'lumotlari
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /add_car:
+    post:
+      tags: [Car]
+      summary: Yangi avtomobil qo'shish (admin)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - category
+                - tan
+                - motor
+                - year
+                - color
+                - distance
+                - gearbook
+                - price
+                - description
+                - car_main_image
+                - car_inner_image
+                - car_outer_image
+              properties:
+                name:
+                  type: string
+                  example: Toyota Camry
+                category:
+                  type: string
+                  example: Sedan
+                tan:
+                  type: boolean
+                  example: false
+                motor:
+                  type: number
+                  example: 2.5
+                year:
+                  type: integer
+                  example: 2022
+                color:
+                  type: string
+                  enum: [white, black, red, blue, gray, silver, yellow, green, brown, orange, purple, other]
+                distance:
+                  type: number
+                  example: 15000
+                gearbook:
+                  type: string
+                  enum: [avtomat karobka, mexanik karobka]
+                price:
+                  type: number
+                  example: 35000
+                description:
+                  type: string
+                  minLength: 25
+                  example: Yaxshi holda, bitta egasi bo'lgan avtomobil
+                car_main_image:
+                  type: string
+                  format: binary
+                car_inner_image:
+                  type: string
+                  format: binary
+                car_outer_image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Avtomobil qo'shildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: added new car
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /update_car/{id}:
+    put:
+      tags: [Car]
+      summary: Avtomobilni yangilash (admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                category:
+                  type: string
+                tan:
+                  type: boolean
+                motor:
+                  type: number
+                year:
+                  type: integer
+                color:
+                  type: string
+                  enum: [white, black, red, blue, gray, silver, yellow, green, brown, orange, purple, other]
+                distance:
+                  type: number
+                gearbook:
+                  type: string
+                  enum: [avtomat karobka, mexanik karobka]
+                price:
+                  type: number
+                description:
+                  type: string
+                car_main_image:
+                  type: string
+                  format: binary
+                car_inner_image:
+                  type: string
+                  format: binary
+                car_outer_image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Avtomobil yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: updated car
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /delete_car/{id}:
+    delete:
+      tags: [Car]
+      summary: Avtomobilni o'chirish (admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Avtomobil o'chirildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: deleted car
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /save_car/{id}:
+    post:
+      tags: [Car]
+      summary: Avtomobilni saqlash / bekor qilish (toggle)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Avtomobil ID si
+      responses:
+        '201':
+          description: Saqlash holati yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              examples:
+                saved:
+                  value:
+                    message: saved successfully
+                updated:
+                  value:
+                    message: save updated
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /clear_unsaved_cars:
+    delete:
+      tags: [Car]
+      summary: Saqlanmagan yozuvlarni tozalash (admin)
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Tozalandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: cleared unsaved cars!
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  # ─── CATEGORY ───────────────────────────────────────────────
+
+  /get_all_categories:
+    get:
+      tags: [Category]
+      summary: Barcha kategoriyalarni olish
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Kategoriyalar ro'yxati
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalPage:
+                    type: integer
+                  prev:
+                    type: object
+                    nullable: true
+                  next:
+                    type: object
+                    nullable: true
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CategoryResponse'
+
+  /get_my_categories:
+    get:
+      tags: [Category]
+      summary: Admin o'zining kategoriyalarini ko'rish
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - $ref: '#/components/parameters/SearchParam'
+        - $ref: '#/components/parameters/SortParam'
+      responses:
+        '200':
+          description: Admin kategoriyalari
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /get_one_category/{id}:
+    get:
+      tags: [Category]
+      summary: Bitta kategoriya va uning mashinalari
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Kategoriya va mashinalari
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  category:
+                    $ref: '#/components/schemas/CategoryResponse'
+                  cars:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        price:
+                          type: number
+                        mainImageUrl:
+                          type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /add_category:
+    post:
+      tags: [Category]
+      summary: Yangi kategoriya qo'shish (admin)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [name, category_image]
+              properties:
+                name:
+                  type: string
+                  example: Sedan
+                category_image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Kategoriya qo'shildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: added new category
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /update_category/{id}:
+    put:
+      tags: [Category]
+      summary: Kategoriyani yangilash (admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                category_image:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: Kategoriya yangilandi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: updated category
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /delete_category/{id}:
+    delete:
+      tags: [Category]
+      summary: Kategoriyani o'chirish (admin)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Kategoriya o'chirildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: deleted category
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ─── SUPERADMIN ─────────────────────────────────────────────
+
+  /change_role_admin/{id}:
+    patch:
+      tags: [Superadmin]
+      summary: Foydalanuvchi rolini o'zgartirish (superadmin)
+      description: |
+        - `user` → `admin`
+        - `admin` → `user`
+        - `superadmin` roli o'zgartirilmaydi
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Foydalanuvchi ID si
+      responses:
+        '200':
+          description: Rol o'zgartirildi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+              example:
+                message: role changed
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'

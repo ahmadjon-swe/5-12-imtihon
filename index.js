@@ -9,6 +9,10 @@ const superadminRouter = require("./router/superadmin.routes")
 const carRouter = require("./router/car.routes")
 const categoryRouter = require("./router/category.routes")
 
+// DOCUMENTATION
+const swaggerUi = require("swagger-ui-express")
+const YAML = require("yamljs")
+const swaggerDoc = YAML.load("./docs/documentation.yml")
 
 connectDataBase()
 const app = express()
@@ -21,6 +25,8 @@ app.use(authRouter)
 app.use(superadminRouter)
 app.use(carRouter)
 app.use(categoryRouter)
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc))
 
 // CHECK ERRORS
 app.use(errorMiddleware)
