@@ -21,7 +21,7 @@ const saveCar = async (req, res, next) => {
       await foundedSave.save()
       res.status(201).json({message: "save updated"})
     }else {
-      await SaveSchema.create({carInfo: id, UserInfo: _id, isSaved: true})
+      await SaveSchema.create({carInfo: id, userInfo: _id, isSaved: true})
       res.status(201).json({message: "saved successfully"})
     }
 
@@ -51,7 +51,28 @@ const clearUnsavedCars = async (req, res, next) => {
   }
 }
 
+const getSavedCars = async (req, res, next) => {
+  try {
+    if(!req.user){
+      throw ErrorHandler.Forbidden("you are not verified")
+    }
+
+    const {_id} = req.user
+
+    if(!_id){
+      throw ErrorHandler.BadRequest("your id is not found")
+    }
+
+    const saved_cars = await SaveSchema.find({isSaved: true, userInfo: _id})
+
+    res.status(200).json(saved_cars)
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   saveCar,
+  getSavedCars,
   clearUnsavedCars
 }

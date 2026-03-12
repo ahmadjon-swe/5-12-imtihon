@@ -835,7 +835,39 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /clear_unsaved_cars:
+  /get_saved_cars:
+    get:
+      tags: [Car]
+      summary: Foydalanuvchining saqlangan avtomobillarini olish
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Saqlangan avtomobillar ro'yxati
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    carInfo:
+                      type: string
+                      description: Avtomobil ID si
+                    userInfo:
+                      type: string
+                      description: Foydalanuvchi ID si
+                    isSaved:
+                      type: boolean
+                    createdAt:
+                      type: string
+                      format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /clear_unsaved_car:
     delete:
       tags: [Car]
       summary: Saqlanmagan yozuvlarni tozalash (admin)

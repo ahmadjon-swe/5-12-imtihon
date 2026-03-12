@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const authorization = require("../middleware/authorization")
 const { getAllCars, getOneCar, addCar, updateCar, deleteCar, getMyCars } = require("../controller/car.controller")
-const { saveCar, clearUnsavedCars } = require("../controller/save.controller")
+const { saveCar, clearUnsavedCars, getSavedCars } = require("../controller/save.controller")
 const { uploadCarImage } = require("../middleware/upload-image")
 
 const carRouter = Router()
@@ -15,6 +15,7 @@ carRouter.delete("/delete_car/:id",authorization, deleteCar )
 
 // SAVE ROUTE
 carRouter.post("/save_car/:id", authorization, saveCar)
+carRouter.get("/get_saved_cars", authorization, getSavedCars)
 carRouter.delete("/clear_unsaved_car/", authorization, clearUnsavedCars)
 
 module.exports = carRouter
