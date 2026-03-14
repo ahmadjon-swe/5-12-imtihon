@@ -6,9 +6,14 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
+        target: 'http://localhost:4001', 
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        cookieDomainRewrite: 'localhost', // ✅ qo'shing
+      },  
+      '/uploads': {
         target: 'http://localhost:4001',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

@@ -10,19 +10,21 @@ module.exports = async (req, res, next) => {
     }
 
     const [Bearer, token] = authorization.split(" ")
-
-    
     if(Bearer !== "Bearer" || !token){
       throw ErrorHandler.BadRequest("Bearer token is required")
     }
 
-    const decode = jwt.verify(token, process.env.SECRET_KEY)
+    let decode
+    try {
+      decode = jwt.verify(token, process.env.SECRET_KEY)
+    } catch (err) {
+      return next(ErrorHandler.UnAuthorized("token expired or invalid"))
+    }
 
     if(!decode){
       throw ErrorHandler.BadRequest("token verifying failed")
     }
     req.user = decode
-
     next()
   } catch (error) {
     next(error)

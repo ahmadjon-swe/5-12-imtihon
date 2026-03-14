@@ -145,8 +145,8 @@ const verify = async (req, res, next)=>{
     res.cookie("refresh_token", 
       refreshToken, {
         httpOnly: true,
-        secure: true,
-        sameSite: "strict",
+        secure: false, // development
+        sameSite: "lax", // develeopment
         maxAge: 60 * 24 *  60 * 60 * 1000 // 2 oy
       })
     

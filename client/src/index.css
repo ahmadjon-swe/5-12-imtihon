@@ -193,7 +193,7 @@ body {
 
 /* ── Car card ── */
 .car-card { cursor: pointer; }
-.car-card-image { position: relative; height: 200px; overflow: hidden; }
+.car-card-image { position: relative; height: 220px; overflow: hidden; }
 .car-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .car-card:hover .car-card-image img { transform: scale(1.05); }
 .car-card-badge {
@@ -216,7 +216,7 @@ body {
 
 /* ── Category card ── */
 .category-card { cursor: pointer; position: relative; overflow: hidden; }
-.category-card-image { height: 160px; position: relative; }
+.category-card-image { height: 220px; position: relative; }
 .category-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
 .category-card:hover .category-card-image img { transform: scale(1.08); }
 .category-card-overlay {
@@ -251,17 +251,16 @@ body {
 .breadcrumb span { color: var(--text3); }
 
 /* ── Car detail ── */
-.car-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.car-detail { display: grid; grid-template-columns: 824fr 1fr; gap: 40px; align-items: start; }
 @media(max-width: 768px) { .car-detail { grid-template-columns: 1fr; } }
 .car-detail-gallery { position: sticky; top: 80px; }
 .car-detail-main-image {
-  height: 360px; border-radius: var(--radius-lg); overflow: hidden;
+  height: 444px; border-radius: var(--radius-lg); overflow: hidden;
   position: relative; margin-bottom: 12px;
 }
 .car-detail-main-image img { width: 100%; height: 100%; object-fit: cover; }
 .car-detail-img-toggle { display: flex; gap: 8px; }
 .car-detail-img-toggle .btn { flex: 1; justify-content: center; }
-/* .car-detail-info {} */
 .car-detail-name {
   font-family: var(--font-display); font-size: 36px; font-weight: 700;
   letter-spacing: 1px; line-height: 1.1; margin-bottom: 4px;

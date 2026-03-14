@@ -101,10 +101,7 @@ const getOneCategory = async (req, res, next) => {
       throw ErrorHandler.NotFound("404 category is not found");
     }
 
-    const cars = await CarSchema.find({category: reqID}).select(
-      "name price mainImageUrl",
-    );
-
+    const cars = await CarSchema.find({category: reqID})
     res.status(200).json({category, cars});
   } catch (error) {
     next(error);

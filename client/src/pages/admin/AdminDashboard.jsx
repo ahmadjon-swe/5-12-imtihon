@@ -148,7 +148,7 @@ export default function AdminDashboard() {
               <div className="grid-3">
                 {cars.map(car => (
                   <div key={car._id} className="card">
-                    <div style={{ height: 160, overflow: 'hidden' }}>
+                    <div style={{ height: 220, overflow: 'hidden' }}>
                       <img src={`/${car.mainImageUrl}`} alt={car.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         onError={e => { e.target.src = 'https://placehold.co/600x400/1a1a24/888?text=No+Image' }} />
@@ -181,7 +181,7 @@ export default function AdminDashboard() {
               <div className="grid-4">
                 {categories.map(cat => (
                   <div key={cat._id} className="card">
-                    <div style={{ height: 120, overflow: 'hidden' }}>
+                    <div style={{ height: 220, overflow: 'hidden' }}>
                       <img src={`/${cat.imageUrl}`} alt={cat.name}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         onError={e => { e.target.src = 'https://placehold.co/400x300/1a1a24/888?text=' + cat.name }} />

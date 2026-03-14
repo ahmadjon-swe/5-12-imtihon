@@ -12,11 +12,20 @@ export default function Navbar() {
   const [showProfile, setShowProfile] = useState(false)
 
   const handleLogout = async () => {
-  try { await logoutAPI() } catch (e) { void e }
-  navigate('/')
-  logout()
-  toast.success('Chiqildi')
-}
+    try { await logoutAPI() } catch (e) { void e }
+    navigate('/')
+    logout()
+    toast.success('Chiqildi')
+  }
+
+  const handleToggleMode = () => {
+    toggleViewMode()
+    if (!isActingAsAdmin) {
+      navigate('/admin')
+    } else {
+      navigate('/')
+    }
+  }
 
   const homeLink = isActingAsAdmin ? '/admin' : '/'
 
@@ -32,7 +41,7 @@ export default function Navbar() {
             {user ? (
               <>
                 {isAdmin && (
-                  <button className="mode-toggle" onClick={toggleViewMode}>
+                  <button className="mode-toggle" onClick={handleToggleMode}>
                     {isActingAsAdmin ? '👤 Foydalanuvchi rejimi' : '⚡ Admin rejimi'}
                   </button>
                 )}
