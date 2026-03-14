@@ -1,6 +1,3 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -14,6 +11,14 @@ export default defineConfig({
       '/uploads': {
         target: 'http://localhost:4001',
         changeOrigin: true,
+<<<<<<< HEAD
+=======
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/uploads': {
+        target: 'http://localhost:4001',
+        changeOrigin: true,
+>>>>>>> 2f0ce334e2f27ff2e0ef23c2963c889b0c33b4e5
       }
     }
   }
